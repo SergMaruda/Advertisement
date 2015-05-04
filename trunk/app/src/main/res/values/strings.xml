@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">CExchange</string>
+
+    <string name="hello_world">Sergey Maruda is the best android developer. 2015</string>
+    <string name="action_settings">Settings</string>
+    <string name="serg_m">Sergey Maruda will be the best Android developer</string>
+    <string name="my_button">Load</string>
+    <string name="nextImageButtonText">Next Image</string>
+    <string name="imageViewResource">images</string>
+    <string name="title_activity_main_activity2_activity_view_post">MainActivity2ActivityViewPost
+    </string>
+    <string name="postTitleDefaultText">Title</string>
+    <string name="image">Image</string>
+    <string name="city">Город</string>
+    <string name="search">Ищу</string>
+</resources>
