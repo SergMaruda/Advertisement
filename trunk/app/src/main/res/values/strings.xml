@@ -13,4 +13,6 @@
     <string name="image">Image</string>
     <string name="city">Город</string>
     <string name="search">Ищу</string>
+    <string name="area">бласть:</string>
+    <string name="title_activity_scan_cities">ScanCities</string>
 </resources>

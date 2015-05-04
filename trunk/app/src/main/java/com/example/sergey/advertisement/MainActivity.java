@@ -107,20 +107,6 @@ public class MainActivity extends ActionBarActivity {
 
             ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, links_text);
             listView.setAdapter(adapter);
-            /*image_number = 0;
-            if(images.size() > 0)
-             {
-                File imageFile = new File(images.elementAt(0));
-
-                    if(imageFile.exists()){
-
-                    Bitmap myBitmap = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
-
-                    imageView.setImageBitmap(myBitmap);
-
-                }
-
-            }*/
             }
         }
 
