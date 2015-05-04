@@ -9,14 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
-import com.example.sergey.advertisement.CustomListViewCityAdapter;
-import com.example.sergey.advertisement.MainActivity;
-import com.example.sergey.advertisement.MainActivity2ActivityViewPost;
-import com.example.sergey.advertisement.R;
-import com.example.sergey.advertisement.RowItemCity;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -24,16 +17,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Vector;
-
 
 public class ScanCities extends ActionBarActivity
   {
@@ -82,9 +68,6 @@ public class ScanCities extends ActionBarActivity
                 m_links_text.put(a.attr("href"), a.text());
                 }
               }
-
-
-
             }
 
           }
@@ -134,7 +117,7 @@ public class ScanCities extends ActionBarActivity
       {
       CustomListViewCityAdapter cities = (CustomListViewCityAdapter)listViewCities.getAdapter();
       RowItemCity item = cities.getItem(position);
-      Intent intent = new Intent(view.getContext(), MainActivity.class);
+      Intent intent = new Intent(view.getContext(), AdvertisementsActivity.class);
       Bundle b = new Bundle();
       b.putString("link_text", item.m_city);
       b.putString("link_ref", item.m_link);

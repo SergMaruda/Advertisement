@@ -25,7 +25,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.util.Vector;
 
-public class MainActivity extends ActionBarActivity {
+public class AdvertisementsActivity extends ActionBarActivity {
 
     ListView listView;
     Vector<String> links_text = new Vector<String>();
@@ -139,7 +139,7 @@ public class MainActivity extends ActionBarActivity {
         final Button button = (Button) findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                MyTask mt = new MyTask(MainActivity.this);
+                MyTask mt = new MyTask(AdvertisementsActivity.this);
                 mt.execute();
             }
         });
