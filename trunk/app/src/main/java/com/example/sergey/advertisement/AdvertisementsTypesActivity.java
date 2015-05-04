@@ -5,11 +5,15 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.example.sergey.advertisement.R;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -17,21 +21,26 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Vector;
 
-public class ScanCities extends ActionBarActivity
+public class AdvertisementsTypesActivity extends ActionBarActivity
   {
-  ListView listViewCities;
-  LinkedHashMap<String, String> m_links_text = new LinkedHashMap<String, String>();
+  ListView listViewAdvertTypes;
+  Vector<Pair<String, String>> m_links_text = new Vector<Pair<String, String>>();
 
-  class ScanCitiesTask extends AsyncTask<Void, Void, Void>
+  class TaskScanTypes extends AsyncTask<Void, Void, Void>
     {
     private Context context;
     private String title;
+    private InputStream input = null;
+    private OutputStream output = null;
 
-    public ScanCitiesTask(Context context)
+    public TaskScanTypes(Context context)
       {
       this.context = context;
       }
@@ -39,37 +48,27 @@ public class ScanCities extends ActionBarActivity
     @Override
     protected Void doInBackground(Void... params)
       {
+
       Document doc = null;
       try
         {
-        String url_base = "http://ukrgo.com";
+        String url_base = "http://kiev.ukrgo.com";
         doc = Jsoup.connect(url_base).get();
 
-        String base_no_http = url_base.substring(7);
-
-        String areas_str = getResources().getString(R.string.area);
-
+        Elements a_elems = doc.select("a");
+        for (Element a : a_elems)
           {
-          Elements a_elements = doc.select("a");
-          boolean found = false;
-          Element table = null;
-          for (Element a : a_elements)
+          String href = a.attr("href");
+
+          if (href.contains("view_section"))
             {
-            String href = a.attr("href");
-
-            int idx_sub_bein = href.indexOf("//") + 2;
-            int idx_sub_end = href.indexOf(base_no_http);
-            int idx_dot_com = href.lastIndexOf(".com/");
-
-            if(href.length() == idx_dot_com + 5)
-              {
-              if(idx_sub_bein < idx_sub_end)
-                {
-                m_links_text.put(a.attr("href"), a.text());
-                }
-              }
+            m_links_text.add(Pair.create(href, a.text()));
             }
 
+          if (href.contains("view_subsection"))
+            {
+            m_links_text.add(Pair.create(href, a.text()));
+            }
           }
 
         }
@@ -90,17 +89,18 @@ public class ScanCities extends ActionBarActivity
     protected void onPostExecute(Void result)
       {
       super.onPostExecute(result);
+      Vector<RowItemAdvertisementType> types  = new Vector<RowItemAdvertisementType>();
 
-
-      Vector<RowItemCity> cities = new Vector<RowItemCity>();
-
-      for(Map.Entry<String,String> entry : m_links_text.entrySet())
+      for( Pair<String, String> entry : m_links_text)
         {
-        cities.add(new RowItemCity(entry.getValue(), entry.getKey()));
+        types.add(new RowItemAdvertisementType(entry.second, entry.first));
         }
 
-      CustomListViewCityAdapter adapter = new CustomListViewCityAdapter(context, R.layout.list_item_city, cities);
-      listViewCities.setAdapter(adapter);
+      m_links_text = null;
+
+      CustomListViewAdvertTypeAdapter adapter = new CustomListViewAdvertTypeAdapter(context, R.layout.list_item_advert_type, types);
+      listViewAdvertTypes.setAdapter(adapter);
+
       }
     }
   
@@ -108,25 +108,28 @@ public class ScanCities extends ActionBarActivity
   protected void onCreate(Bundle savedInstanceState)
     {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_scan_cities);
-    listViewCities = (ListView) findViewById(R.id.listViewCities);
+    setContentView(R.layout.activity_advertisements_types);
 
-    listViewCities.setOnItemClickListener(new AdapterView.OnItemClickListener()
+    listViewAdvertTypes = (ListView) findViewById(R.id.listViewAdvertTypes);
+
+    listViewAdvertTypes.setOnItemClickListener(new AdapterView.OnItemClickListener()
     {
     public void onItemClick(AdapterView parent, View view, int position, long id)
       {
-      CustomListViewCityAdapter cities = (CustomListViewCityAdapter)listViewCities.getAdapter();
-      RowItemCity item = cities.getItem(position);
+      CustomListViewAdvertTypeAdapter adapt = (CustomListViewAdvertTypeAdapter)parent.getAdapter();
+      String link = adapt.getItem(position).m_link;
+      String link_text = adapt.getItem(position).m_text;
       Intent intent = new Intent(view.getContext(), AdvertisementsActivity.class);
       Bundle b = new Bundle();
-      b.putString("link_text", item.m_city);
-      b.putString("link_ref", item.m_link);
-      intent.putExtras(b);
+      b.putString("link_text", link_text); //Your id
+      b.putString("link", link);
+      intent.putExtras(b); //Put your id to your next Intent
       startActivity(intent);
       }
     });
 
-    ScanCitiesTask task = new ScanCitiesTask(this);
+
+    TaskScanTypes task = new TaskScanTypes(this);
     task.execute();
     }
   
@@ -134,7 +137,7 @@ public class ScanCities extends ActionBarActivity
   public boolean onCreateOptionsMenu(Menu menu)
     {
     // Inflate the menu; this adds items to the action bar if it is present.
-    getMenuInflater().inflate(R.menu.menu_scan_cities, menu);
+    getMenuInflater().inflate(R.menu.menu_advertisements_types, menu);
     return true;
     }
   

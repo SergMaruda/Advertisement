@@ -9,17 +9,15 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-
         <activity
-            android:name="com.example.sergey.cexchange.ScanCities"
-            android:label="@string/app_name" >
+            android:name=".AdvertisementsTypesActivity"
+            android:label="AdvertisementsTypes" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".AdvertisementsActivity"
             android:label="@string/app_name" >
@@ -28,7 +26,10 @@
             android:name=".MainActivity2ActivityViewPost"
             android:label="@string/title_activity_main_activity2_activity_view_post" >
         </activity>
-
+        <activity
+            android:name=".ScanCitiesActivities"
+            android:label="ScanCities" >
+        </activity>
     </application>
 
 </manifest>

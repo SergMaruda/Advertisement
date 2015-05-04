@@ -46,12 +46,12 @@ public View getView(int position, View convertView, ViewGroup parent)
     holder = new ViewHolder();
     holder.imageView = (ImageView) convertView.findViewById(R.id.icon);
     holder.textView = (TextView)convertView.findViewById(R.id.textViewImages);
-    holder.textView.setTextIsSelectable(true);
     convertView.setTag(holder);
     }
   else
     holder = (ViewHolder) convertView.getTag();
 
+  holder.textView.setTextIsSelectable(true);
   if(!rowItem.text.isEmpty())
     {
     holder.textView.setText(rowItem.text);

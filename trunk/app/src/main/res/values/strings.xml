@@ -15,4 +15,5 @@
     <string name="search">Ищу</string>
     <string name="area">бласть:</string>
     <string name="title_activity_scan_cities">ScanCities</string>
+    <string name="title_activity_advertisements_types">AdvertisementsTypes</string>
 </resources>

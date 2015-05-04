@@ -7,24 +7,20 @@ package com.example.sergey.advertisement;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
-public class CustomListViewCityAdapter extends ArrayAdapter<RowItemCity> {
+public class CustomListViewAdvertTypeAdapter extends ArrayAdapter<RowItemAdvertisementType> {
 
 Context context;
 
-public CustomListViewCityAdapter(Context context, int resourceId, List<RowItemCity> items)
+public CustomListViewAdvertTypeAdapter(Context context, int resourceId, List<RowItemAdvertisementType> items)
   {
   super(context, resourceId, items);
   this.context = context;
@@ -39,22 +35,23 @@ private class ViewHolder
 public View getView(int position, View convertView, ViewGroup parent)
   {
   ViewHolder holder = null;
-  RowItemCity rowItem = getItem(position);
-
+  RowItemAdvertisementType rowItem = getItem(position);
   LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-  if (convertView == null)
+  //if (convertView == null)
     {
-    convertView = mInflater.inflate(R.layout.list_item_city, null);
+    convertView = mInflater.inflate(R.layout.list_item_advert_type, null);
     holder = new ViewHolder();
-    holder.textView = (TextView) convertView.findViewById(R.id.textViewCity);
-
+    holder.textView = (TextView) convertView.findViewById(R.id.textAdvertType);
     convertView.setTag(holder);
     }
-  else
-    holder = (ViewHolder) convertView.getTag();
+ // else
+    {
+    //holder = (ViewHolder) convertView.getTag();
+    }
 
-  holder.textView.setTextIsSelectable(true);
-  holder.textView.setText(rowItem.m_city);
+  if(rowItem.m_link.contains("view_section"))
+    holder.textView.setTypeface(null, Typeface.BOLD);
+  holder.textView.setText(rowItem.m_text);
 
   return convertView;
   }

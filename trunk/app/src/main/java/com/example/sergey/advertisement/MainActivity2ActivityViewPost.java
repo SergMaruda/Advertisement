@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Vector;
 
 
@@ -42,8 +43,8 @@ public class MainActivity2ActivityViewPost extends ActionBarActivity
     private InputStream input = null;
     private OutputStream output = null;
     HttpURLConnection connection = null;
-    private  String m_description;
-    private  String m_meta;
+    private  String m_description = new String();
+    private  String m_meta = new String();
 
     //File imageFile;
 
@@ -51,7 +52,6 @@ public class MainActivity2ActivityViewPost extends ActionBarActivity
       {
       this.context = context;
       }
-
 
     @Override
     protected Void doInBackground(Void... params)
@@ -61,12 +61,13 @@ public class MainActivity2ActivityViewPost extends ActionBarActivity
         {
         String content_def = "margin-top: 15px; text-align: left; width: 100%; color: #2a2a2a; font-size: 14px;";
         String meta_def = "color: #242424; font-size: 12px; margin-top: 5px;";
-
-        doc = Jsoup.connect(m_link).get();
-
+        int idx = m_link.lastIndexOf("/");
+        String head = m_link.substring(0,idx);
+        String post = m_link.substring(idx + 1, m_link.length());
+        post = URLEncoder.encode(post, "utf-8");
+        doc = Jsoup.connect(head+"/"+post).get();
         Elements div_elem = doc.select("div");
 
-        m_description = new String();
         boolean descr_read = false;
         boolean meta_read = false;
 
@@ -90,10 +91,15 @@ public class MainActivity2ActivityViewPost extends ActionBarActivity
             String meta = de.text();
             String city_str = getString(R.string.city);
             String search_str = getString(R.string.search);
+
             int idx_city = meta.indexOf(city_str);
-            String tail = meta.substring(idx_city, meta.length());
-            int idx_search = tail.indexOf(search_str);
-            meta = meta.substring(0, idx_city) + "\n" + tail.substring(0, idx_search) + "\n" + tail.substring(idx_search, tail.length());
+            if(idx_city != -1)
+              meta = meta.substring(idx_city) + "\n" + meta.substring(idx_city, meta.length());
+
+            int idx_search = meta.indexOf(search_str);
+            if(idx_search != -1)
+              meta = meta.substring(idx_search) + "\n" + meta.substring(idx_search, meta.length());
+
             m_description += meta;
             meta_read = true;
             }
@@ -118,6 +124,9 @@ public class MainActivity2ActivityViewPost extends ActionBarActivity
         images_files.clear();
         for(String p:pictures)
           {
+          int end_picture = p.lastIndexOf("/");
+          String file_name = p.substring(end_picture, p.length());
+
           int end_base = m_link.lastIndexOf("/");
           String url_base = m_link.substring(0, end_base);
           String sub_url = p.substring(1);
@@ -133,29 +142,34 @@ public class MainActivity2ActivityViewPost extends ActionBarActivity
           // download the file
           input = connection.getInputStream();
 
-          File outputDir = context.getCacheDir(); // context being the Activity pointer
-          File imageFile = File.createTempFile("img", "jpg", outputDir);
+          String full_path = context.getCacheDir().getAbsolutePath() + file_name; // context being the Activity pointer
 
-          output = new FileOutputStream(imageFile);
-
-          byte data[] = new byte[4096];
-          long total = 0;
-          int count;
-          while ((count = input.read(data)) != -1)
+          File file = new File(full_path);
+          if(!file.exists())
             {
-            // allow canceling with back button
-            if (isCancelled())
-              {
-              input.close();
-              return null;
-              }
+            output = new FileOutputStream(full_path);
 
-            total += count;
-            // publishing the progress....
-            output.write(data, 0, count);
+            byte data[] = new byte[4096];
+            long total = 0;
+            int count;
+            while ((count = input.read(data)) != -1)
+              {
+              // allow canceling with back button
+              if (isCancelled())
+                {
+                input.close();
+                return null;
+                }
+
+              total += count;
+              // publishing the progress....
+              output.write(data, 0, count);
+              }
             }
 
-          images_files.add(imageFile.getAbsolutePath());
+
+
+          images_files.add(full_path);
           }
         }
 

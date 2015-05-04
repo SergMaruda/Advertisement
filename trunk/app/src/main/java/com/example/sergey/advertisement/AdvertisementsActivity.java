@@ -30,6 +30,7 @@ public class AdvertisementsActivity extends ActionBarActivity {
     ListView listView;
     Vector<String> links_text = new Vector<String>();
     Vector<String> links = new Vector<String>();
+    String m_link;
 
     class MyTask extends AsyncTask<Void, Void, Void>
         {
@@ -53,7 +54,7 @@ public class AdvertisementsActivity extends ActionBarActivity {
             Document doc = null;
             try
                 {
-                String url_base = "http://kiev.ukrgo.com/view_subsection.php?id_subsection=146";
+                String url_base = m_link;
                 doc = Jsoup.connect(url_base ).get();
 
                 //Element content = doc.getElementById("content");
@@ -110,21 +111,23 @@ public class AdvertisementsActivity extends ActionBarActivity {
             }
         }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
         {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //imageView = (ImageView) findViewById(R.id.imageView);
         listView = (ListView) findViewById(R.id.listView);
+
+        Bundle b = getIntent().getExtras();
+        m_link = b.getString("link");
+        String link_text = b.getString("link_text");
+        setTitle(link_text);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
         public void onItemClick(AdapterView parent, View view, int position, long id)
             {
-            //item listView.getItemAtPosition(position);
             String link = links_text.elementAt(position);
             String link_ref = links.elementAt(position);
             Intent intent = new Intent(view.getContext(), MainActivity2ActivityViewPost.class);
@@ -133,17 +136,12 @@ public class AdvertisementsActivity extends ActionBarActivity {
             b.putString("link_ref", link_ref);
             intent.putExtras(b); //Put your id to your next Intent
             startActivity(intent);
-                }
-            });
-
-        final Button button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                MyTask mt = new MyTask(AdvertisementsActivity.this);
-                mt.execute();
             }
         });
-    }
+
+        MyTask mt = new MyTask(AdvertisementsActivity.this);
+        mt.execute();
+        }
 
 
     @Override
@@ -152,8 +150,6 @@ public class AdvertisementsActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
