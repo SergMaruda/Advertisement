@@ -1,5 +1,6 @@
 package com.example.sergey.advertisement;
 
+import android.app.ExpandableListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -11,6 +12,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.example.sergey.advertisement.R;
@@ -24,14 +28,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Vector;
 
 public class AdvertisementsTypesActivity extends ActionBarActivity
   {
-  ListView listViewAdvertTypes;
-  Vector<Pair<String, String>> m_links_text = new Vector<Pair<String, String>>();
+  ExpandableListView listViewAdvertTypes;
+  Vector<RowItemAdvertisementType> m_links_text = new Vector<RowItemAdvertisementType>();
 
   class TaskScanTypes extends AsyncTask<Void, Void, Void>
     {
@@ -62,12 +69,12 @@ public class AdvertisementsTypesActivity extends ActionBarActivity
 
           if (href.contains("view_section"))
             {
-            m_links_text.add(Pair.create(href, a.text()));
+            m_links_text.add(new RowItemAdvertisementType(a.text(), href));
             }
 
           if (href.contains("view_subsection"))
             {
-            m_links_text.add(Pair.create(href, a.text()));
+            m_links_text.add(new RowItemAdvertisementType(a.text(), href));
             }
           }
 
@@ -89,16 +96,28 @@ public class AdvertisementsTypesActivity extends ActionBarActivity
     protected void onPostExecute(Void result)
       {
       super.onPostExecute(result);
-      Vector<RowItemAdvertisementType> types  = new Vector<RowItemAdvertisementType>();
 
-      for( Pair<String, String> entry : m_links_text)
-        {
-        types.add(new RowItemAdvertisementType(entry.second, entry.first));
-        }
+      Vector<String> header  = new Vector<String>();
+
+      HashMap<String, List<RowItemAdvertisementType>> m_data = new HashMap<String, List<RowItemAdvertisementType>>();
+
+      for( RowItemAdvertisementType entry : m_links_text)
+      {
+       if(entry.m_link.contains("view_section"))
+       {
+         header.add(entry.m_text);
+         m_data.put(entry.m_text, new Vector<RowItemAdvertisementType>());
+       }
+        else {
+         m_data.get(header.lastElement()).add(entry);
+       }
+
+
+      }
 
       m_links_text = null;
 
-      CustomListViewAdvertTypeAdapter adapter = new CustomListViewAdvertTypeAdapter(context, R.layout.list_item_advert_type, types);
+      CustomListViewAdvertTypeAdapter adapter = new CustomListViewAdvertTypeAdapter(context, header, m_data);
       listViewAdvertTypes.setAdapter(adapter);
 
       }
@@ -110,24 +129,30 @@ public class AdvertisementsTypesActivity extends ActionBarActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_advertisements_types);
 
-    listViewAdvertTypes = (ListView) findViewById(R.id.listViewAdvertTypes);
+    listViewAdvertTypes = (ExpandableListView) findViewById(R.id.listViewAdvertTypes);
 
-    listViewAdvertTypes.setOnItemClickListener(new AdapterView.OnItemClickListener()
-    {
-    public void onItemClick(AdapterView parent, View view, int position, long id)
+    listViewAdvertTypes.setOnChildClickListener(new ExpandableListView.OnChildClickListener()
       {
-      CustomListViewAdvertTypeAdapter adapt = (CustomListViewAdvertTypeAdapter)parent.getAdapter();
-      String link = adapt.getItem(position).m_link;
-      String link_text = adapt.getItem(position).m_text;
-      Intent intent = new Intent(view.getContext(), AdvertisementsActivity.class);
-      Bundle b = new Bundle();
-      b.putString("link_text", link_text); //Your id
-      b.putString("link", link);
-      intent.putExtras(b); //Put your id to your next Intent
-      startActivity(intent);
-      }
-    });
+      @Override
+      public boolean onChildClick(ExpandableListView parent, View v,int groupPosition, int childPosition, long id)
+        {
+        /* You must make use of the View v, find the view by id and extract the text as below*/
+        ExpandableListAdapter adapter =  parent.getExpandableListAdapter();
+        CustomListViewAdvertTypeAdapter adapter_conc = (CustomListViewAdvertTypeAdapter)adapter;
+        RowItemAdvertisementType adv_type = (RowItemAdvertisementType )adapter_conc.getChild(groupPosition, childPosition);
+        String link = adv_type.m_link;
+        String link_text = adv_type.m_text;
 
+        Intent intent = new Intent(v.getContext(), AdvertisementsActivity.class);
+        Bundle b = new Bundle();
+        b.putString("link_text", link_text); //Your id
+        b.putString("link", link);
+        intent.putExtras(b); //Put your id to your next Intent
+        startActivity(intent);
+
+        return true;  // i missed this
+        }
+      });
 
     TaskScanTypes task = new TaskScanTypes(this);
     task.execute();

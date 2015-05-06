@@ -167,8 +167,6 @@ public class MainActivity2ActivityViewPost extends ActionBarActivity
               }
             }
 
-
-
           images_files.add(full_path);
           }
         }
@@ -194,15 +192,12 @@ public class MainActivity2ActivityViewPost extends ActionBarActivity
       super.onPostExecute(result);
 
       Vector<RowItem> items = new Vector<RowItem>();
-
       items.add(new RowItem("", m_description));
 
       for(String f: images_files)
-        {
         items.add(new RowItem(f, ""));
-        }
-      CustomListViewAdapter adapter2 = new CustomListViewAdapter(context, R.layout.list_item, items);
-      listViewImages.setAdapter(adapter2);
+
+      listViewImages.setAdapter( new CustomListViewAdapter(context, R.layout.list_item, items));
       }
     }
 
@@ -210,7 +205,7 @@ public class MainActivity2ActivityViewPost extends ActionBarActivity
   protected void onCreate(Bundle savedInstanceState)
     {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main_activity2_activity_view_post);
+    setContentView(R.layout.activity_advertisements);
     m_title = (TextView) findViewById(R.id.postTitle);
     Bundle b = getIntent().getExtras();
     String link_text = b.getString("link_text");

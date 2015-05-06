@@ -8,51 +8,109 @@ package com.example.sergey.advertisement;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
+import java.util.HashMap;
 import java.util.List;
 
-public class CustomListViewAdvertTypeAdapter extends ArrayAdapter<RowItemAdvertisementType> {
-
-Context context;
-
-public CustomListViewAdvertTypeAdapter(Context context, int resourceId, List<RowItemAdvertisementType> items)
+public class CustomListViewAdvertTypeAdapter extends BaseExpandableListAdapter
   {
-  super(context, resourceId, items);
-  this.context = context;
-  }
 
-/*private view holder class*/
-private class ViewHolder
-  {
-  TextView textView;
-  }
+  Context m_context;
 
-public View getView(int position, View convertView, ViewGroup parent)
-  {
-  ViewHolder holder = null;
-  RowItemAdvertisementType rowItem = getItem(position);
-  LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-  //if (convertView == null)
+
+  private List<String> _listDataHeader; // header titles
+  // child data in format of header title, child title
+  private HashMap<String, List<RowItemAdvertisementType>> _listDataChild;
+
+  public CustomListViewAdvertTypeAdapter(Context context, List<String> listDataHeader,
+                               HashMap<String, List<RowItemAdvertisementType>> listChildData)
     {
-    convertView = mInflater.inflate(R.layout.list_item_advert_type, null);
-    holder = new ViewHolder();
-    holder.textView = (TextView) convertView.findViewById(R.id.textAdvertType);
-    convertView.setTag(holder);
-    }
- // else
-    {
-    //holder = (ViewHolder) convertView.getTag();
+    m_context = context;
+    _listDataHeader = listDataHeader;
+    _listDataChild = listChildData;
     }
 
-  if(rowItem.m_link.contains("view_section"))
-    holder.textView.setTypeface(null, Typeface.BOLD);
-  holder.textView.setText(rowItem.m_text);
+    @Override
+    public Object getChild(int groupPosition, int childPosititon) {
+      return this._listDataChild.get(this._listDataHeader.get(groupPosition))
+              .get(childPosititon);
+    }
+    @Override
+    public long getChildId(int groupPosition, int childPosition) {
+      return childPosition;
+    }
 
-  return convertView;
-  }
+    @Override
+    public View getChildView(int groupPosition, final int childPosition,
+                             boolean isLastChild, View convertView, ViewGroup parent) {
+
+      final RowItemAdvertisementType child = (RowItemAdvertisementType) getChild(groupPosition, childPosition);
+      String childText = child.m_text;
+
+      if (convertView == null) {
+        LayoutInflater infalInflater = (LayoutInflater) m_context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        convertView = infalInflater.inflate(R.layout.list_sub_item, null);
+      }
+
+      TextView txtListChild = (TextView) convertView.findViewById(R.id.lblListItem);
+
+      txtListChild.setText(childText);
+      return convertView;
+    }
+
+    @Override
+    public int getChildrenCount(int groupPosition) {
+      return this._listDataChild.get(this._listDataHeader.get(groupPosition))
+              .size();
+    }
+
+    @Override
+    public Object getGroup(int groupPosition) {
+      return this._listDataHeader.get(groupPosition);
+    }
+
+    @Override
+    public int getGroupCount() {
+      return this._listDataHeader.size();
+    }
+
+    @Override
+    public long getGroupId(int groupPosition) {
+      return groupPosition;
+    }
+
+    @Override
+    public View getGroupView(int groupPosition, boolean isExpanded,
+                             View convertView, ViewGroup parent) {
+      String headerTitle = (String) getGroup(groupPosition);
+      if (convertView == null)
+        {
+        LayoutInflater infalInflater = (LayoutInflater) m_context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        convertView = infalInflater.inflate(R.layout.list_group, null);
+        }
+
+      TextView lblListHeader = (TextView) convertView.findViewById(R.id.lblListHeader);
+      lblListHeader.setTypeface(null, Typeface.BOLD);
+      lblListHeader.setText(headerTitle);
+
+      return convertView;
+    }
+
+    @Override
+    public boolean hasStableIds() {
+      return false;
+    }
+
+    @Override
+    public boolean isChildSelectable(int groupPosition, int childPosition) {
+      return true;
+    }
+
 }
