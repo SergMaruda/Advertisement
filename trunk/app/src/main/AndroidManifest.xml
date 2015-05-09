@@ -27,7 +27,7 @@
             android:label="@string/title_activity_main_activity2_activity_view_post" >
         </activity>
         <activity
-            android:name=".ScanCitiesActivities"
+            android:name=".ScanRegionsActivity"
             android:label="ScanCities" >
         </activity>
     </application>

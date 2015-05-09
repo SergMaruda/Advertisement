@@ -21,7 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Vector;
 
-public class ScanCitiesActivities extends ActionBarActivity
+public class ScanRegionsActivity extends ActionBarActivity
   {
   ListView listViewCities;
   LinkedHashMap<String, String> m_links_text = new LinkedHashMap<String, String>();
@@ -92,14 +92,14 @@ public class ScanCitiesActivities extends ActionBarActivity
       super.onPostExecute(result);
 
 
-      Vector<RowItemCity> cities = new Vector<RowItemCity>();
+      Vector<RowItemRegion> cities = new Vector<RowItemRegion>();
 
       for(Map.Entry<String,String> entry : m_links_text.entrySet())
         {
-        cities.add(new RowItemCity(entry.getValue(), entry.getKey()));
+        cities.add(new RowItemRegion(entry.getValue(), entry.getKey()));
         }
 
-      CustomListViewCityAdapter adapter = new CustomListViewCityAdapter(context, R.layout.list_item_city, cities);
+      CustomListViewRegionAdapter adapter = new CustomListViewRegionAdapter(context, R.layout.list_item_region, cities);
       listViewCities.setAdapter(adapter);
       }
     }
@@ -115,11 +115,11 @@ public class ScanCitiesActivities extends ActionBarActivity
     {
     public void onItemClick(AdapterView parent, View view, int position, long id)
       {
-      CustomListViewCityAdapter cities = (CustomListViewCityAdapter)listViewCities.getAdapter();
-      RowItemCity item = cities.getItem(position);
+      CustomListViewRegionAdapter cities = (CustomListViewRegionAdapter)listViewCities.getAdapter();
+      RowItemRegion item = cities.getItem(position);
       Intent intent = new Intent(view.getContext(), AdvertisementsActivity.class);
       Bundle b = new Bundle();
-      b.putString("link_text", item.m_city);
+      b.putString("link_text", item.m_region);
       b.putString("link_ref", item.m_link);
       intent.putExtras(b);
       startActivity(intent);

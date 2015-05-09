@@ -11,9 +11,10 @@
     </string>
     <string name="postTitleDefaultText">Title</string>
     <string name="image">Image</string>
-    <string name="city">Город</string>
-    <string name="search">Ищу</string>
+    <string name="city">город</string>
+    <string name="search">ищу</string>
     <string name="area">бласть:</string>
     <string name="title_activity_scan_cities">ScanCities</string>
     <string name="title_activity_advertisements_types">AdvertisementsTypes</string>
+    <string name="ImageCity">ImageCity</string>
 </resources>

@@ -7,24 +7,19 @@ package com.example.sergey.advertisement;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
-public class CustomListViewCityAdapter extends ArrayAdapter<RowItemCity> {
+public class CustomListViewRegionAdapter extends ArrayAdapter<RowItemRegion> {
 
 Context context;
 
-public CustomListViewCityAdapter(Context context, int resourceId, List<RowItemCity> items)
+public CustomListViewRegionAdapter(Context context, int resourceId, List<RowItemRegion> items)
   {
   super(context, resourceId, items);
   this.context = context;
@@ -33,28 +28,28 @@ public CustomListViewCityAdapter(Context context, int resourceId, List<RowItemCi
 /*private view holder class*/
 private class ViewHolder
   {
-  TextView textView;
+  TextView textViewRegion;
   }
 
 public View getView(int position, View convertView, ViewGroup parent)
   {
   ViewHolder holder = null;
-  RowItemCity rowItem = getItem(position);
+  RowItemRegion rowItem = getItem(position);
 
   LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
   if (convertView == null)
     {
-    convertView = mInflater.inflate(R.layout.list_item_city, null);
+    convertView = mInflater.inflate(R.layout.list_item_region, null);
     holder = new ViewHolder();
-    holder.textView = (TextView) convertView.findViewById(R.id.textViewCity);
+    holder.textViewRegion = (TextView) convertView.findViewById(R.id.textViewRegion);
 
     convertView.setTag(holder);
     }
   else
     holder = (ViewHolder) convertView.getTag();
 
-  holder.textView.setTextIsSelectable(true);
-  holder.textView.setText(rowItem.m_city);
+  holder.textViewRegion.setTextIsSelectable(true);
+  holder.textViewRegion.setText(rowItem.m_region);
 
   return convertView;
   }

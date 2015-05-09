@@ -28,7 +28,7 @@ import java.util.Vector;
 public class AdvertisementsActivity extends ActionBarActivity {
 
     ListView listView;
-    Vector<String> links_text = new Vector<String>();
+    Vector<RowItemAdvertTitle> links_text = new Vector<RowItemAdvertTitle>();
     Vector<String> links = new Vector<String>();
     String m_link;
 
@@ -77,13 +77,16 @@ public class AdvertisementsActivity extends ActionBarActivity {
                         links.add(link_ref);
 
                         String span_class = spans.get(0).attr("class");
+                        String meta_data = "";
                         if (span_class.contentEquals("attribut_post"))
                             {
                             String elem =spans.get(0).text();
-                            linkText += "\n" +elem;
+                            meta_data = elem;
                             }
 
-                        links_text.add(linkText);
+                        AdvertTitleData data = AdvertTitleParser.Parse(AdvertisementsActivity.this, meta_data);
+
+                        links_text.add(new RowItemAdvertTitle(data.m_city, link_ref, linkText, "", 10,10));
                         }
                     }
 
@@ -106,7 +109,7 @@ public class AdvertisementsActivity extends ActionBarActivity {
             {
             super.onPostExecute(result);
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, links_text);
+            CustomListViewAdapterAdvertTitle adapter = new CustomListViewAdapterAdvertTitle(context, R.layout.list_item_advertisement_title, links_text);
             listView.setAdapter(adapter);
             }
         }
@@ -128,8 +131,9 @@ public class AdvertisementsActivity extends ActionBarActivity {
         {
         public void onItemClick(AdapterView parent, View view, int position, long id)
             {
-            String link = links_text.elementAt(position);
-            String link_ref = links.elementAt(position);
+            String link = links_text.elementAt(position).m_description;
+            String link_ref = links_text.elementAt(position).m_link;
+
             Intent intent = new Intent(view.getContext(), MainActivity2ActivityViewPost.class);
             Bundle b = new Bundle();
             b.putString("link_text", link); //Your id
