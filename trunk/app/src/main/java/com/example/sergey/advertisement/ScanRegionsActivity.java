@@ -21,10 +21,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import activities.AdvertisementsActivity;
+
 public class ScanRegionsActivity extends ActionBarActivity
   {
   ListView listViewCities;
-  LinkedHashMap<String, String> m_links_text = new LinkedHashMap<String, String>();
+  LinkedHashMap<String, String> m_links_text = new LinkedHashMap<>();
 
   class ScanCitiesTask extends AsyncTask<Void, Void, Void>
     {
@@ -92,7 +94,7 @@ public class ScanRegionsActivity extends ActionBarActivity
       super.onPostExecute(result);
 
 
-      Vector<RowItemRegion> cities = new Vector<RowItemRegion>();
+      Vector<RowItemRegion> cities = new Vector<>();
 
       for(Map.Entry<String,String> entry : m_links_text.entrySet())
         {

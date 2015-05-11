@@ -1,23 +1,19 @@
-package com.example.sergey.advertisement;
+package activities;
 
-import android.app.ExpandableListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 
+import com.example.sergey.advertisement.CustomListViewAdvertTypeAdapter;
 import com.example.sergey.advertisement.R;
+import com.example.sergey.advertisement.RowItemAdvertisementType;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -27,18 +23,14 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Vector;
 
 public class AdvertisementsTypesActivity extends ActionBarActivity
   {
   ExpandableListView listViewAdvertTypes;
-  Vector<RowItemAdvertisementType> m_links_text = new Vector<RowItemAdvertisementType>();
+  Vector<RowItemAdvertisementType> m_links_text = new Vector<>();
 
   class TaskScanTypes extends AsyncTask<Void, Void, Void>
     {
@@ -61,6 +53,18 @@ public class AdvertisementsTypesActivity extends ActionBarActivity
         {
         String url_base = "http://kiev.ukrgo.com";
         doc = Jsoup.connect(url_base).get();
+
+        Element title = doc.getElementsByTag("title").get(0);
+
+        final String title_str = title.text().split(context.getResources().getString(R.string.doski))[0];
+
+        runOnUiThread(new Runnable()
+        {
+        public void run()
+          {
+          AdvertisementsTypesActivity.this.setTitle(title_str);
+          }
+        });
 
         Elements a_elems = doc.select("a");
         for (Element a : a_elems)
@@ -97,9 +101,9 @@ public class AdvertisementsTypesActivity extends ActionBarActivity
       {
       super.onPostExecute(result);
 
-      Vector<String> header  = new Vector<String>();
+      Vector<String> header  = new Vector<>();
 
-      HashMap<String, List<RowItemAdvertisementType>> m_data = new HashMap<String, List<RowItemAdvertisementType>>();
+      HashMap<String, List<RowItemAdvertisementType>> m_data = new HashMap<>();
 
       for( RowItemAdvertisementType entry : m_links_text)
       {

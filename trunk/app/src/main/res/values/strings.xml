@@ -3,6 +3,7 @@
 
     <string name="hello_world">Sergey Maruda is the best android developer. 2015</string>
     <string name="action_settings">Settings</string>
+    <string name="action_filter">Фильтры</string>
     <string name="serg_m">Sergey Maruda will be the best Android developer</string>
     <string name="my_button">Load</string>
     <string name="nextImageButtonText">Next Image</string>
@@ -11,10 +12,18 @@
     </string>
     <string name="postTitleDefaultText">Title</string>
     <string name="image">Image</string>
-    <string name="city">город</string>
+    <string name="city">город:</string>
     <string name="search">ищу</string>
     <string name="area">бласть:</string>
+    <string name="woman">женщина</string>
+    <string name="mne">мне</string>
+    <string name="man">мужчина</string>
+    <string name="kg">кг</string>
+    <string name="cm">см</string>
+    <string name="height">рост</string>
     <string name="title_activity_scan_cities">ScanCities</string>
     <string name="title_activity_advertisements_types">AdvertisementsTypes</string>
     <string name="ImageCity">ImageCity</string>
+    <string name="Kiev">Киев</string>
+    <string name="doski">доски</string>
 </resources>

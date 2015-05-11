@@ -1,10 +1,5 @@
 package com.example.sergey.advertisement;
 
-/**
- * Created by Sergey on 03.05.2015.
- */
-
-
 import java.util.List;
 import android.app.Activity;
 import android.content.Context;
@@ -17,12 +12,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class CustomListViewAdapter extends ArrayAdapter<RowItem> {
+public class ListViewAdvert extends ArrayAdapter<RowItem> {
 
 Context context;
 
-public CustomListViewAdapter(Context context, int resourceId,
-                             List<RowItem> items) {
+public ListViewAdvert(Context context, int resourceId,
+                      List<RowItem> items) {
 super(context, resourceId, items);
 this.context = context;
 }
@@ -36,7 +31,7 @@ ImageView imageView;
 
 public View getView(int position, View convertView, ViewGroup parent)
   {
-  ViewHolder holder = null;
+  ViewHolder holder;
   RowItem rowItem = getItem(position);
 
   LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);

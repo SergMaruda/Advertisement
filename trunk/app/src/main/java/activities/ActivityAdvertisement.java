@@ -1,4 +1,4 @@
-package com.example.sergey.advertisement;
+package activities;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -8,6 +8,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.example.sergey.advertisement.ListViewAdvert;
+import com.example.sergey.advertisement.R;
+import com.example.sergey.advertisement.RowItem;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,19 +26,21 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 
-public class MainActivity2ActivityViewPost extends ActionBarActivity
+public class ActivityAdvertisement extends ActionBarActivity
   {
   TextView m_title;
   String m_link;
   ListView listViewImages;
 
   private MyTask m_task = null;
-  Vector<RowItem> listItems = new Vector<RowItem>();
-  Vector<String> pictures = new Vector<String>();
-  Vector<String> images_files = new Vector<String>();
+  Vector<RowItem> listItems = new Vector<>();
+  Vector<String> pictures = new Vector<>();
+  Set<String> images_files = new HashSet<>();
 
   class MyTask extends AsyncTask<Void, Void, Void>
     {
@@ -43,8 +49,8 @@ public class MainActivity2ActivityViewPost extends ActionBarActivity
     private InputStream input = null;
     private OutputStream output = null;
     HttpURLConnection connection = null;
-    private  String m_description = new String();
-    private  String m_meta = new String();
+    private  String m_description = "";
+    private  String m_meta = "";
 
     //File imageFile;
 
@@ -191,13 +197,13 @@ public class MainActivity2ActivityViewPost extends ActionBarActivity
       {
       super.onPostExecute(result);
 
-      Vector<RowItem> items = new Vector<RowItem>();
+      Vector<RowItem> items = new Vector<>();
       items.add(new RowItem("", m_description));
 
       for(String f: images_files)
         items.add(new RowItem(f, ""));
 
-      listViewImages.setAdapter( new CustomListViewAdapter(context, R.layout.list_item, items));
+      listViewImages.setAdapter( new ListViewAdvert(context, R.layout.list_item, items));
       }
     }
 
@@ -205,16 +211,15 @@ public class MainActivity2ActivityViewPost extends ActionBarActivity
   protected void onCreate(Bundle savedInstanceState)
     {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_advertisements);
-    m_title = (TextView) findViewById(R.id.postTitle);
+    setContentView(R.layout.activity_advertisement);
     Bundle b = getIntent().getExtras();
     String link_text = b.getString("link_text");
     m_link = b.getString("link_ref");
-    m_title.setText(link_text);
+    setTitle(link_text);
 
     listViewImages = (ListView) findViewById(R.id.listViewImages);
 
-    m_task = new MyTask(MainActivity2ActivityViewPost.this);
+    m_task = new MyTask(ActivityAdvertisement.this);
     m_task.execute();
     }
   
