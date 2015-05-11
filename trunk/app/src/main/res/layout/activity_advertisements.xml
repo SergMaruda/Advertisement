@@ -12,6 +12,14 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewFilters"
+            android:text="Filter"
+            android:textStyle="bold"
+            android:textSize="15sp"
+            android:background="#ffa6ff54"/>
 
         <ListView
             android:layout_width="match_parent"

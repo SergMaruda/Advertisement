@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.sergey.advertisement.CustomListViewAdapterAdvertTitle;
 import com.example.sergey.advertisement.R;
@@ -32,6 +33,7 @@ import java.util.Vector;
 public class AdvertisementsActivity extends ActionBarActivity
   {
   ListView listView;
+  TextView textViewFilters;
   Vector<RowItemAdvertTitle> advert_titles = new Vector<>();
   Vector<Filter> filters = new Vector<>();
   Vector<Filter> new_filters = new Vector<>();
@@ -84,6 +86,8 @@ public class AdvertisementsActivity extends ActionBarActivity
 
         doc = Jsoup.connect(m_link).get();
 
+        String reset_filters_str = getResources().getString(R.string.ResetFiltersStr);
+
 
         Elements links_elem = doc.select("a");
         advert_titles = new Vector<>();
@@ -93,13 +97,17 @@ public class AdvertisementsActivity extends ActionBarActivity
           String href = l.attr("href");
           if (href.contains("./view_subsection.php?"))
             {
-            Filter filter = new Filter();
-            filter.m_titile = l.text();
-            String[] separated = href.split(sub_section);
-            if(separated.length >= 2)
-              filter.m_url = separated[1];
-            filter.m_active = l.hasAttr("style");
-            filters.add(filter);
+            String link_text = l.text();
+            if(!link_text.contains(reset_filters_str))
+              {
+              Filter filter = new Filter();
+              filter.m_titile = link_text;
+              String[] separated = href.split(sub_section);
+              if (separated.length >= 2)
+                filter.m_url = separated[1];
+              filter.m_active = l.hasAttr("style");
+              filters.add(filter);
+              }
             }
 
           if (link_class.contentEquals("link_post"))
@@ -147,6 +155,18 @@ public class AdvertisementsActivity extends ActionBarActivity
       m_progress_dialog = null;
       CustomListViewAdapterAdvertTitle adapter = new CustomListViewAdapterAdvertTitle(context, R.layout.list_item_advertisement_title, advert_titles);
       listView.setAdapter(adapter);
+
+      int num_filters = filters.size();
+
+      String filters_str = "";
+
+      for(int i = 0; i < num_filters ; ++i)
+        {
+        Filter filter = filters.get(i);
+        if(filter.m_active)
+          filters_str += filters.get(i).m_titile + ',';
+        }
+      textViewFilters.setText(filters_str);
       }
     }
 
@@ -156,6 +176,7 @@ public class AdvertisementsActivity extends ActionBarActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_advertisements);
     listView = (ListView) findViewById(R.id.listView);
+    textViewFilters = (TextView) findViewById(R.id.textViewFilters);
 
     Bundle b = getIntent().getExtras();
     m_link = b.getString("link");
@@ -183,7 +204,6 @@ public class AdvertisementsActivity extends ActionBarActivity
       }
     });
 
-
     LoadData();
     }
 
@@ -200,7 +220,6 @@ public class AdvertisementsActivity extends ActionBarActivity
     mt.execute();
     m_progress_dialog.show();
     }
-
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu)
