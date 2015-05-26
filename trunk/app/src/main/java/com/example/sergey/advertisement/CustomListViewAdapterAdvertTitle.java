@@ -24,18 +24,6 @@ super(context, resourceId, items);
 this.context = context;
 }
 
-/*private view holder class*/
-private class ViewHolder {
-TextView textViewDecription;
-ImageView imageViewSex;
-TextView textViewAge;
-ImageView imageViewCity;
-ImageView imageViewCamera;
-ImageView imageViewEye;
-TextView textViewEye;
-TextView textViewCity;
-}
-
 public View getView(int position, View convertView, ViewGroup parent)
   {
   ViewHolder holder;
@@ -93,7 +81,7 @@ public View getView(int position, View convertView, ViewGroup parent)
   holder.imageViewCamera.setImageDrawable(drw);
 
   drw = null;
-  if(rowItem.m_num_views > 0)
+  if(rowItem.m_num_views >= 0)
     {
     holder.textViewEye.setText(Integer.toString(rowItem.m_num_views));
     drw = context.getResources().getDrawable(R.drawable.eye);
@@ -106,4 +94,16 @@ public View getView(int position, View convertView, ViewGroup parent)
 
   return convertView;
   }
+
+/*private view holder class*/
+private class ViewHolder {
+TextView textViewDecription;
+ImageView imageViewSex;
+TextView textViewAge;
+ImageView imageViewCity;
+ImageView imageViewCamera;
+ImageView imageViewEye;
+TextView textViewEye;
+TextView textViewCity;
+}
 }

@@ -1,7 +1,6 @@
 package activities;
 
 import java.io.IOException;
-import java.io.OptionalDataException;
 import java.io.Serializable;
 
 public class Filter implements Serializable
@@ -26,9 +25,5 @@ public class Filter implements Serializable
     m_titile = (String)in.readObject();
     m_url =(String)in.readObject();
     m_active = in.readBoolean();
-
     }
-
-
-
   }

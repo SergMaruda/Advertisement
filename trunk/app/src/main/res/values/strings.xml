@@ -8,8 +8,7 @@
     <string name="my_button">Load</string>
     <string name="nextImageButtonText">Next Image</string>
     <string name="imageViewResource">images</string>
-    <string name="title_activity_main_activity2_activity_view_post">MainActivity2ActivityViewPost
-    </string>
+    <string name="title_activity_main_activity2_activity_view_post">MainActivity2ActivityViewPost </string>
     <string name="postTitleDefaultText">Title</string>
     <string name="image">Image</string>
     <string name="city">город:</string>
@@ -27,4 +26,5 @@
     <string name="Kiev">Киев</string>
     <string name="doski">доски</string>
     <string name="ResetFiltersStr">Сбросить фильтры</string>
+    <string name="WriteToAuthor">Связаться с автором объявления</string>
 </resources>

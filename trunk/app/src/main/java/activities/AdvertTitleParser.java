@@ -4,11 +4,20 @@ import android.content.Context;
 
 import com.example.sergey.advertisement.R;
 
-import activities.AdvertTitleData;
-
 
 public class AdvertTitleParser
   {
+  public static int ParseIntSafe(String i_str)
+    {
+    try
+      {
+      return Integer.parseInt(i_str);
+      } catch (NumberFormatException e)
+      {
+      return 0;
+      }
+    }
+
   public static AdvertTitleData Parse(Context i_ctx, String i_str)
     {
     AdvertTitleData data = new AdvertTitleData();
@@ -31,12 +40,11 @@ public class AdvertTitleParser
       else if(tokens[i].contains(city_str))
           data.m_city = tokens[i+1];
       else if(tokens[i].contains(mne))
-        data.m_age =  Integer.parseInt(tokens[i+1]);
+        data.m_age = ParseIntSafe(tokens[i + 1]);
       else if(tokens[i].contentEquals("|"))
-        data.m_num_views = Integer.parseInt(tokens[i+1]);
+        data.m_num_views = ParseIntSafe(tokens[i + 1]);
       }
 
     return data;
     }
-
   }

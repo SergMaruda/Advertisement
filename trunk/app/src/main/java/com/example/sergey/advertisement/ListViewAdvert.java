@@ -1,6 +1,5 @@
 package com.example.sergey.advertisement;
 
-import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -12,6 +11,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.List;
+
 public class ListViewAdvert extends ArrayAdapter<RowItem> {
 
 Context context;
@@ -22,13 +23,6 @@ super(context, resourceId, items);
 this.context = context;
 }
 
-/*private view holder class*/
-private class ViewHolder {
-TextView textView;
-ImageView imageView;
-
-}
-
 public View getView(int position, View convertView, ViewGroup parent)
   {
   ViewHolder holder;
@@ -37,7 +31,7 @@ public View getView(int position, View convertView, ViewGroup parent)
   LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
   if (convertView == null)
     {
-    convertView = mInflater.inflate(R.layout.list_item, null);
+    convertView = mInflater.inflate(R.layout.list_item_advert, null);
     holder = new ViewHolder();
     holder.imageView = (ImageView) convertView.findViewById(R.id.icon);
     holder.textView = (TextView)convertView.findViewById(R.id.textViewImages);
@@ -61,5 +55,13 @@ public View getView(int position, View convertView, ViewGroup parent)
     }
 
   return convertView;
+  }
+
+/*private view holder class*/
+private class ViewHolder
+  {
+  TextView textView;
+  ImageView imageView;
+
   }
 }

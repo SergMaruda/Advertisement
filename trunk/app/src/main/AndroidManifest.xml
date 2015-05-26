@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.sergey.advertisement" >
+<manifest package="com.example.sergey.advertisement"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -34,6 +34,11 @@
             android:name="activities.ActivityFilters"
             android:label="Филтры" >
         </activity>
+        <activity
+            android:name="activities.ActivitySendToAuthor"
+            android:label="Send" >
+        </activity>
+
 
     </application>
 
