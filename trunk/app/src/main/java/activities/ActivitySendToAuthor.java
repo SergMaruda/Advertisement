@@ -41,7 +41,7 @@ public class ActivitySendToAuthor extends ActionBarActivity
   String m_host;
   String m_captcha_file_name;
 
-  static String EncodeString(String i_str) throws UnsupportedEncodingException
+  static String EncodeString(String i_str)
     {
     try
       {
