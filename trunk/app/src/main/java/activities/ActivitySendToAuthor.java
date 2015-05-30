@@ -14,10 +14,14 @@ import android.widget.TextView;
 
 import com.example.sergey.advertisement.R;
 
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.Map;
 
 public class ActivitySendToAuthor extends ActionBarActivity
   {
@@ -36,6 +40,18 @@ public class ActivitySendToAuthor extends ActionBarActivity
   String m_captcha_url;
   String m_host;
   String m_captcha_file_name;
+
+  static String EncodeString(String i_str) throws UnsupportedEncodingException
+    {
+    try
+      {
+      return URLEncoder.encode(i_str, "windows-1251");
+      } catch (UnsupportedEncodingException e)
+      {
+      }
+
+    return i_str;
+    }
 
   @Override
   protected void onCreate(Bundle savedInstanceState)
@@ -127,14 +143,11 @@ public class ActivitySendToAuthor extends ActionBarActivity
     if (m_send_message_task != null && m_send_message_task.getStatus() == AsyncTask.Status.RUNNING)
       return;
 
-    final String captcha = m_text_view_catcha.getText().toString();
-    final String email = m_edit_text_email.getText().toString();
-    final String name = m_edit_text_name.getText().toString();
-    final String message = m_edit_text_message.getText().toString();
-
+    final String captcha = EncodeString(m_text_view_catcha.getText().toString());
+    final String email = EncodeString(m_edit_text_email.getText().toString());
+    final String name = EncodeString(m_edit_text_name.getText().toString());
+    final String message = EncodeString(m_edit_text_message.getText().toString());
     final String target_url = "http://" + m_host + "/send_mail_user.php?id_post=" + m_post_id;
-    final String cap_txt = captcha;
-    String cont = "Content-Type: text/html; charset=windows-1251";
 
     m_send_message_task = new AsyncTask<Void, Void, Void>()
     {
@@ -143,31 +156,45 @@ public class ActivitySendToAuthor extends ActionBarActivity
       {
       try
         {
-        Connection.Response res = Jsoup.connect(target_url)
-            .header("Content-Type", "application/x-www-form-urlencoded")
-            .data("name", name)
-            .data("email", email)
-            .data("text", message)
-            .data("keystring", captcha)
-            .cookies(m_cookies)
-            .timeout(10000)
-            .method(Connection.Method.POST)
-            .followRedirects(false)
-            .execute();
+        String urlParameters = "name=" + name + "&" +
+            "email=" + email + "&" +
+            "text=" + message + "&" +
+            "keystring=" + captcha;
 
-        int code = res.statusCode();
-        ++code;
+        byte[] postData = urlParameters.getBytes();
+        int postDataLength = postData.length;
+        URL url = new URL(target_url);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setDoOutput(true);
+        conn.setInstanceFollowRedirects(false);
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        conn.setRequestProperty("charset", "windows-1251");
+        conn.setRequestProperty("Content-Length", Integer.toString(postDataLength));
+        conn.setUseCaches(false);
+
+        String cook = "";
+        for (Map.Entry<String, String> entry : m_cookies.entrySet())
+          {
+          String key = entry.getKey();
+          String value = entry.getValue();
+          cook += key + "=" + value + ";";
+          }
+        conn.setRequestProperty("Cookie", cook);
+        try (DataOutputStream wr = new DataOutputStream(conn.getOutputStream()))
+          {
+          wr.write(postData);
+          conn.connect();
+          conn.getResponseCode();
+          } catch (IOException e)
+          {
+          }
         } catch (Exception e)
         {
-        int i = 0;
-        ++i;
-
         }
 
       return null;
       }
-
-
     @Override
     protected void onPostExecute(Void result)
       {

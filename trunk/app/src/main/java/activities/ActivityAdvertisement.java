@@ -62,7 +62,7 @@ public class ActivityAdvertisement extends ActionBarActivity
     m_link = b.getString("link_ref");
     setTitle(link_text);
 
-    //m_link = "http://kiev.ukrgo.com/post_6072435_vstrechus_v_avto_s_devushkoj_mat_pomosch.html";
+    // m_link = "http://kiev.ukrgo.com/post_6072435_vstrechus_v_avto_s_devushkoj_mat_pomosch.html";
 
     Pattern pattern = Pattern.compile("[0-9]+");
     Matcher matcher = pattern.matcher(m_link);
@@ -96,7 +96,7 @@ public class ActivityAdvertisement extends ActionBarActivity
       intent.putExtra("link", m_link);
       intent.putExtra("capatcha_url", ActivityAdvertisement.this.m_captcha_url);
 
-      HashMap<String, String> map = new HashMap<String, String>(ActivityAdvertisement.this.m_cookies);
+      HashMap<String, String> map = new HashMap<>(ActivityAdvertisement.this.m_cookies);
       intent.putExtra("cookies", map);
       startActivity(intent);
 
