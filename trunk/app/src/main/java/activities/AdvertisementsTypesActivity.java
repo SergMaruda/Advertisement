@@ -3,8 +3,8 @@ package activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +23,7 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -31,6 +32,66 @@ public class AdvertisementsTypesActivity extends ActionBarActivity
   {
   ExpandableListView listViewAdvertTypes;
   Vector<RowItemAdvertisementType> m_links_text = new Vector<>();
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState)
+    {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_advertisements_types);
+
+    listViewAdvertTypes = (ExpandableListView) findViewById(R.id.listViewAdvertTypes);
+
+    listViewAdvertTypes.setOnChildClickListener(new ExpandableListView.OnChildClickListener()
+    {
+    @Override
+    public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id)
+      {
+        /* You must make use of the View v, find the view by id and extract the text as below*/
+      ExpandableListAdapter adapter = parent.getExpandableListAdapter();
+      CustomListViewAdvertTypeAdapter adapter_conc = (CustomListViewAdvertTypeAdapter) adapter;
+      RowItemAdvertisementType adv_type = (RowItemAdvertisementType) adapter_conc.getChild(groupPosition, childPosition);
+      String link = adv_type.m_link;
+      String link_text = adv_type.m_text;
+
+      Intent intent = new Intent(v.getContext(), AdvertisementsActivity.class);
+      Bundle b = new Bundle();
+      b.putString("link_text", link_text); //Your id
+      b.putString("link", link);
+      intent.putExtras(b); //Put your id to your next Intent
+      startActivity(intent);
+
+      return true;  // i missed this
+      }
+    });
+
+    TaskScanTypes task = new TaskScanTypes(this);
+    task.execute();
+    }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu)
+    {
+    // Inflate the menu; this adds items to the action bar if it is present.
+    getMenuInflater().inflate(R.menu.menu_advertisements_types, menu);
+    return true;
+    }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item)
+    {
+    // Handle action bar item clicks here. The action bar will
+    // automatically handle clicks on the Home/Up button, so long
+    // as you specify a parent activity in AndroidManifest.xml.
+    int id = item.getItemId();
+
+    //noinspection SimplifiableIfStatement
+    if (id == R.id.action_settings)
+      {
+      return true;
+      }
+
+    return super.onOptionsItemSelected(item);
+    }
 
   class TaskScanTypes extends AsyncTask<Void, Void, Void>
     {
@@ -47,7 +108,6 @@ public class AdvertisementsTypesActivity extends ActionBarActivity
     @Override
     protected Void doInBackground(Void... params)
       {
-
       Document doc = null;
       try
         {
@@ -82,8 +142,7 @@ public class AdvertisementsTypesActivity extends ActionBarActivity
             }
           }
 
-        }
-      catch (IOException e)
+        } catch (IOException e)
         {
         e.printStackTrace();
         }
@@ -101,89 +160,37 @@ public class AdvertisementsTypesActivity extends ActionBarActivity
       {
       super.onPostExecute(result);
 
-      Vector<String> header  = new Vector<>();
+      ArrayList<String> header = new ArrayList<>();
 
       HashMap<String, List<RowItemAdvertisementType>> m_data = new HashMap<>();
 
-      for( RowItemAdvertisementType entry : m_links_text)
-      {
-       if(entry.m_link.contains("view_section"))
-       {
-         header.add(entry.m_text);
-         m_data.put(entry.m_text, new Vector<RowItemAdvertisementType>());
-       }
-        else {
-         m_data.get(header.lastElement()).add(entry);
-       }
+      for (RowItemAdvertisementType entry : m_links_text)
+        {
+        if (entry.m_link.contains("view_section"))
+          {
+          if (!header.isEmpty())
+            {
+            int last_idx = header.size() - 1;
+            String le = header.get(last_idx);
+            if (m_data.get(le).isEmpty())
+              {
+              header.remove(last_idx);
+              m_data.remove(le);
+              }
+            }
 
-
-      }
+          header.add(entry.m_text);
+          m_data.put(entry.m_text, new Vector<RowItemAdvertisementType>());
+          } else
+          {
+          m_data.get(header.get(header.size() - 1)).add(entry);
+          }
+        }
 
       m_links_text = null;
 
       CustomListViewAdvertTypeAdapter adapter = new CustomListViewAdvertTypeAdapter(context, header, m_data);
       listViewAdvertTypes.setAdapter(adapter);
-
       }
-    }
-  
-  @Override
-  protected void onCreate(Bundle savedInstanceState)
-    {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_advertisements_types);
-
-    listViewAdvertTypes = (ExpandableListView) findViewById(R.id.listViewAdvertTypes);
-
-    listViewAdvertTypes.setOnChildClickListener(new ExpandableListView.OnChildClickListener()
-      {
-      @Override
-      public boolean onChildClick(ExpandableListView parent, View v,int groupPosition, int childPosition, long id)
-        {
-        /* You must make use of the View v, find the view by id and extract the text as below*/
-        ExpandableListAdapter adapter =  parent.getExpandableListAdapter();
-        CustomListViewAdvertTypeAdapter adapter_conc = (CustomListViewAdvertTypeAdapter)adapter;
-        RowItemAdvertisementType adv_type = (RowItemAdvertisementType )adapter_conc.getChild(groupPosition, childPosition);
-        String link = adv_type.m_link;
-        String link_text = adv_type.m_text;
-
-        Intent intent = new Intent(v.getContext(), AdvertisementsActivity.class);
-        Bundle b = new Bundle();
-        b.putString("link_text", link_text); //Your id
-        b.putString("link", link);
-        intent.putExtras(b); //Put your id to your next Intent
-        startActivity(intent);
-
-        return true;  // i missed this
-        }
-      });
-
-    TaskScanTypes task = new TaskScanTypes(this);
-    task.execute();
-    }
-  
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu)
-    {
-    // Inflate the menu; this adds items to the action bar if it is present.
-    getMenuInflater().inflate(R.menu.menu_advertisements_types, menu);
-    return true;
-    }
-  
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item)
-    {
-    // Handle action bar item clicks here. The action bar will
-    // automatically handle clicks on the Home/Up button, so long
-    // as you specify a parent activity in AndroidManifest.xml.
-    int id = item.getItemId();
-    
-    //noinspection SimplifiableIfStatement
-    if (id == R.id.action_settings)
-      {
-      return true;
-      }
-    
-    return super.onOptionsItemSelected(item);
     }
   }
