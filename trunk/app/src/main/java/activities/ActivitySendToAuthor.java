@@ -8,8 +8,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.sergey.advertisement.R;
@@ -34,12 +34,14 @@ public class ActivitySendToAuthor extends ActionBarActivity
 
   ImageView m_image_view_captcha;
   HashMap<String, String> m_cookies;
-  Button m_send_button;
+  View m_send_button;
+  View m_refresh_button;
   String m_post_id;
   String m_link;
   String m_captcha_url;
   String m_host;
   String m_captcha_file_name;
+  ProgressBar m_prog_bar;
 
   static String EncodeString(String i_str)
     {
@@ -49,7 +51,6 @@ public class ActivitySendToAuthor extends ActionBarActivity
       } catch (UnsupportedEncodingException e)
       {
       }
-
     return i_str;
     }
 
@@ -67,14 +68,24 @@ public class ActivitySendToAuthor extends ActionBarActivity
     m_host = b.getString("host");
 
     m_text_view_catcha = (TextView) findViewById(R.id.textViewCaptcha);
-    m_send_button = (Button) findViewById(R.id.buttonSendToAuthor);
+    m_send_button = findViewById(R.id.buttonSendToAuthor);
     m_image_view_captcha = (ImageView) findViewById(R.id.imageViewCaptcha);
     m_edit_text_name = (TextView) findViewById(R.id.editTextName);
     m_edit_text_email = (TextView) findViewById(R.id.editTextEmail);
     m_edit_text_message = (TextView) findViewById(R.id.editTextMessage);
+    m_prog_bar = (ProgressBar) findViewById(R.id.progressBar);
+    m_refresh_button = findViewById(R.id.imageButtonRefresh);
 
     LoadCaptcha();
 
+    m_refresh_button.setOnClickListener(new View.OnClickListener()
+    {
+    @Override
+    public void onClick(View v)
+      {
+      LoadCaptcha();
+      }
+    });
     m_send_button.setOnClickListener(new View.OnClickListener()
     {
     @Override
@@ -114,6 +125,8 @@ public class ActivitySendToAuthor extends ActionBarActivity
     if (m_load_captcha_task != null && m_load_captcha_task.getStatus() == AsyncTask.Status.RUNNING)
       return;
 
+    m_prog_bar.setVisibility(View.VISIBLE);
+
     m_load_captcha_task = new AsyncTask<Void, Void, Void>()
     {
     @Override
@@ -132,6 +145,7 @@ public class ActivitySendToAuthor extends ActionBarActivity
 
       Bitmap myBitmap = BitmapFactory.decodeFile(m_captcha_file_name);
       m_image_view_captcha.setImageBitmap(myBitmap);
+      m_prog_bar.setVisibility(View.GONE);
       }
     };
 
@@ -142,6 +156,8 @@ public class ActivitySendToAuthor extends ActionBarActivity
     {
     if (m_send_message_task != null && m_send_message_task.getStatus() == AsyncTask.Status.RUNNING)
       return;
+
+    m_prog_bar.setVisibility(View.VISIBLE);
 
     final String captcha = EncodeString(m_text_view_catcha.getText().toString());
     final String email = EncodeString(m_edit_text_email.getText().toString());
@@ -199,6 +215,7 @@ public class ActivitySendToAuthor extends ActionBarActivity
     protected void onPostExecute(Void result)
       {
       super.onPostExecute(result);
+      m_prog_bar.setVisibility(View.GONE);
       LoadCaptcha();
       }
     };
